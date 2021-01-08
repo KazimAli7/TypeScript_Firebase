@@ -1,20 +1,35 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { FormEvent, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { SetEmail, SetPassword, LoginUser } from '../store/actions/Actions';
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const email = useSelector((state: any) => state.auth.email);
+  const password = useSelector((state: any) => state.auth.password);
   const history = useHistory();
-  const handleSubmit = (evt: any) => {
+  const loggedIn = useSelector((state: any) => state.auth.loggedIn);
+  const autherror = useSelector((state: any) => state.auth.autherror);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/main');
+    }
+  }, [loggedIn]);
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    console.log('all states check ', email, password);
+    const crediential = {
+      email,
+      password,
+    };
+    dispatch(LoginUser(crediential));
   };
 
-  const counter = useSelector((state) => state);
-  console.log('checking if state is set', counter);
-
+  // const counter = useSelector((state) => state);
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="grid place-items-center mx-2 my-20 sm:my-auto">
@@ -35,7 +50,7 @@ function Login() {
               name="email"
               value={email}
               placeholder="e-mail address"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => dispatch(SetEmail(e.target.value))}
               autoComplete="email"
               className="block w-full py-3 px-1 mt-2
                     text-gray-800 appearance-none
@@ -50,7 +65,7 @@ function Login() {
               type="password"
               name="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => dispatch(SetPassword(e.target.value))}
               placeholder="password"
               autoComplete="current-password"
               className="block w-full py-3 px-1 mt-2 mb-4
@@ -68,6 +83,10 @@ function Login() {
             >
               Login
             </button>
+
+            <div className="sm:flex sm:flex-wrap mt-8 sm:mb-4 text-sm text-center">
+              {autherror && autherror ? autherror : null}
+            </div>
 
             <div className="sm:flex sm:flex-wrap mt-8 sm:mb-4 text-sm text-center">
               <a href="forgot-password" className="flex-2 underline">

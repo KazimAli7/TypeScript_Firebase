@@ -1,23 +1,60 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useState } from 'react';
+import { FormEvent, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-function Register() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confPassword, setconfPassword] = useState('');
-  const history = useHistory();
+import {
+  CreateUser, SetConfPassword, SetEmail, SetFirstName, SetLastName, SetPassword,
+  PasswordError,
+  PasswordLength,
+} from '../store/actions/Actions';
 
-  const handleSubmit = (evt: any) => {
+function Register() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const firstName = useSelector((state: any) => state.auth.firstname);
+  const lastName = useSelector((state: any) => state.auth.lastname);
+  const email = useSelector((state: any) => state.auth.email);
+  const password = useSelector((state: any) => state.auth.password);
+  const confPassword = useSelector((state: any) => state.auth.confpassword);
+  const loggedIn = useSelector((state: any) => state.auth.loggedIn);
+  const autherror = useSelector((state: any) => state.auth.autherror);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/main');
+    }
+  }, [loggedIn]);
+
+  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (password === confPassword) {
-      console.log('states check here', firstName, lastName, email, password);
+    const validationArray = [];
+    if (password.length < 7) {
+      validationArray.push('password length');
+    }
+    if (confPassword.length < 7) {
+      validationArray.push('password length');
+    }
+    if (password !== confPassword) {
+      validationArray.push('password do not match');
+      dispatch(PasswordError());
+    }
+    if (validationArray.length > 0) {
+      if (password !== confPassword) {
+        validationArray.push('password do not match');
+        dispatch(PasswordError());
+      } else {
+        dispatch(PasswordLength());
+      }
+    } else if (password === confPassword) {
+      const crediential = {
+        email,
+        password,
+      };
+      dispatch(CreateUser(crediential));
     }
   };
-
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="grid place-items-center mx-2 my-20 sm:my-auto">
@@ -38,7 +75,7 @@ function Register() {
               name="fname"
               placeholder="first name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => dispatch(SetFirstName(e.target.value))}
               autoComplete=""
               className="block w-full py-3 px-1 mt-2
                     text-gray-800 appearance-none
@@ -54,7 +91,7 @@ function Register() {
               name="lname"
               placeholder="last name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => dispatch(SetLastName(e.target.value))}
               autoComplete=""
               className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
@@ -69,7 +106,7 @@ function Register() {
               name="email"
               placeholder="e-mail address"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => dispatch(SetEmail(e.target.value))}
               autoComplete="email"
               className="block w-full py-3 px-1 mt-2
                     text-gray-800 appearance-none
@@ -84,7 +121,7 @@ function Register() {
               type="password"
               name="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => dispatch(SetPassword(e.target.value))}
               placeholder="password"
               autoComplete="current-password"
               className="block w-full py-3 px-1 mt-2 mb-4
@@ -100,7 +137,7 @@ function Register() {
               type="password"
               name="confpassword"
               value={confPassword}
-              onChange={(e) => setconfPassword(e.target.value)}
+              onChange={(e) => dispatch(SetConfPassword(e.target.value))}
               placeholder="confirm password"
               autoComplete="current-password"
               className="block w-full py-3 px-1 mt-2 mb-4
@@ -109,17 +146,23 @@ function Register() {
                     focus:text-gray-500 focus:outline-none focus:border-gray-200"
               required
             />
-
             <button
               type="submit"
-              onSubmit={handleSubmit}
+              // onSubmit={handleSubmit}
               className="w-full py-3 mt-10 bg-gray-800 rounded-sm
                     font-medium text-white uppercase
                     focus:outline-none hover:bg-gray-700 hover:shadow-none"
             >
               Register
             </button>
-
+            {
+              autherror && autherror
+                ? (
+                  <div className="text-red-500 mt-8 uppercase text-center font-small">
+                    {autherror}
+                  </div>
+                ) : null
+            }
             <div className="sm:flex sm:flex-wrap mt-8 sm:mb-4 text-sm text-center">
               Already registered?
               {' '}
