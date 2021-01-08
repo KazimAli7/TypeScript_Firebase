@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+// import CreateUserAuth from '../services/ApiCall';
 
 function Register() {
   const [firstName, setFirstName] = useState('');
@@ -11,10 +12,11 @@ function Register() {
   const [confPassword, setconfPassword] = useState('');
   const history = useHistory();
 
-  const handleSubmit = (evt: any) => {
+  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     if (password === confPassword) {
-      console.log('states check here', firstName, lastName, email, password);
+      // const ApiCheck = await CreateUserAuth(email, password);
+      // console.log('states check here', ApiCheck);
     }
   };
 
@@ -112,7 +114,7 @@ function Register() {
 
             <button
               type="submit"
-              onSubmit={handleSubmit}
+              // onSubmit={handleSubmit}
               className="w-full py-3 mt-10 bg-gray-800 rounded-sm
                     font-medium text-white uppercase
                     focus:outline-none hover:bg-gray-700 hover:shadow-none"

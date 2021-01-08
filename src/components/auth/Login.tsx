@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -9,12 +9,9 @@ function Login() {
   const history = useHistory();
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    console.log('all states check ', email, password);
   };
 
-  const counter = useSelector((state) => state);
-  console.log('checking if state is set', counter);
-
+  // const counter = useSelector((state) => state);
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="grid place-items-center mx-2 my-20 sm:my-auto">
