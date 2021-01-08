@@ -5,7 +5,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import SignedInLink from '../SignedInLink';
-import SignedOutLink from '../SignedOutLink';
+// import SignedOutLink from '../SignedOutLink';
 
 function NavBar() {
   return (
@@ -16,7 +16,7 @@ function NavBar() {
             Type_Fire
           </Link>
           <SignedInLink />
-          <SignedOutLink />
+          {/* <SignedOutLink /> */}
         </div>
       </div>
     </nav>
